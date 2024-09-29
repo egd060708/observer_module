@@ -2,8 +2,6 @@
 
 #include <Eigen/Dense>
 
-using namespace Eigen;
-
 // 定义常规矩阵类型
 #define Matrixd(r, c) Eigen::Matrix<double, r, c>
 // 定义方阵类型（Square）
