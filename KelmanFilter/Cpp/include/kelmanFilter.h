@@ -71,7 +71,7 @@ public:
         // P = (E - K * H) * P_minus;
 
         // 使用lu分解法
-        Eigen::PartialPivLU<Eigen::Matrix<double, 28, 28>> _tempLu = temp.lu();
+        Eigen::PartialPivLU<Eigen::Matrix<double, yNum, yNum>> _tempLu = temp.lu();
         Eigen::Matrix<double, yNum, 1> _tempY = _tempLu.solve(_y - y);
         Eigen::Matrix<double, yNum, xNum> _tempH = _tempLu.solve(H);
         Eigen::Matrix<double, yNum, yNum> _tempR = _tempLu.solve(R);
