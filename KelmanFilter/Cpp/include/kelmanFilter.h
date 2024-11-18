@@ -9,7 +9,7 @@
 
 // 状态维度，输入维度，输出维度
 template <uint8_t xNum, uint8_t uNum, uint8_t yNum>
-class kalmanFilter
+class kelmanFilter
 {
 private:
     MatrixSd(xNum) A = MatrixSd(xNum)::Zero();           // 状态转移矩阵
@@ -22,9 +22,9 @@ private:
     Matrixd(yNum, 1) y = Matrixd(yNum, 1)::Zero();       // 输出矩阵
 public:
     // 构造函数
-    kalmanFilter() {}
+    kelmanFilter() {}
     // 设置离散状态空间方程，及测量矩阵
-    void setFunc(MatrixSd(xNum) _A, Matrixd(xNum, uNum) _B, Matrixd(yNum, xNum) _H, double _Ts = 0)
+    void setFunc(const MatrixSd(xNum)& _A, const Matrixd(xNum, uNum)& _B, const Matrixd(yNum, xNum)& _H, double _Ts = 0)
     {
         if (_Ts <= 0)
         {
@@ -41,19 +41,19 @@ public:
         this->H = _H;
     }
     // 设置协方差矩阵（注意，协方差矩阵可以很小，但不能为零）
-    void setConv(MatrixSd(xNum) _Q, MatrixSd(yNum) _R, MatrixSd(xNum) _P = MatrixSd(xNum)::Identity())
+    void setConv(const MatrixSd(xNum)& _Q, const MatrixSd(yNum)& _R, const MatrixSd(xNum)& _P = MatrixSd(xNum)::Identity())
     {
         this->Q = _Q;
         this->R = _R;
         this->P = _P;
     }
-    void updateConv(MatrixSd(xNum) _Q, MatrixSd(yNum) _R)
+    void updateConv(const MatrixSd(xNum)& _Q, const MatrixSd(yNum)& _R)
     {
         this->Q = _Q;
         this->R = _R;
     }
     // 求解卡尔曼滤波(输入参数为状态估计器的输入，以及观测值输入)
-    void f(Matrixd(uNum, 1) _u, Matrixd(yNum, 1) _y)
+    void f(const Matrixd(uNum, 1)& _u, const Matrixd(yNum, 1)& _y)
     {
         // 计算先验状态估计
         Matrixd(xNum, 1) x_minus = A * x + B * _u;
@@ -71,7 +71,7 @@ public:
         // P = (E - K * H) * P_minus;
 
         // 使用lu分解法
-        Eigen::PartialPivLU<Eigen::Matrix<double, 28, 28>> _tempLu = temp.lu();
+        Eigen::PartialPivLU<Eigen::Matrix<double, yNum, yNum>> _tempLu = temp.lu();
         Eigen::Matrix<double, yNum, 1> _tempY = _tempLu.solve(_y - y);
         Eigen::Matrix<double, yNum, xNum> _tempH = _tempLu.solve(H);
         Eigen::Matrix<double, yNum, yNum> _tempR = _tempLu.solve(R);
